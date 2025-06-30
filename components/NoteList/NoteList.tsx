@@ -1,66 +1,40 @@
+// Внесіть зміну у розмітку компонента NoteList.
+'use client';
 
-import cssStyles from "./NoteList.module.css";
-import type { Note } from "../../types/note";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteNote } from "../../lib/api";
-import Loading from "@/app/loading";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { useState } from "react";
-import Link from "next/link";
+import { Note } from '@/types/note';
+import css from './NoteList.module.css';
+import NoteItem from '../NoteItem/NoteItem';
+import { deleteNote } from '@/lib/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface NoteListProps {
-  notes: Note[];
-}
+type Props = {
+  items: Note[];
+};
 
-export default function NoteList({ notes }: NoteListProps) {
-  const [deletingNoteId, setDeletingNoteId] = useState<Note["id"] | null>(null);
-
+export default function NoteList({ items }: Props) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: async (id: Note["id"]) => deleteNote(id),
+  const { mutate: removeItem, isPending } = useMutation({
+    mutationFn: deleteNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      setDeletingNoteId(null);
-    },
-    onError: () => {
-      setDeletingNoteId(null);
+      queryClient.invalidateQueries({
+        queryKey: ['allNotes'],
+      });
     },
   });
 
-  const { isError } = mutation;
-
-  const handleDelete = (id: number) => {
-    setDeletingNoteId(id);
-    mutation.mutate(id);
-  };
-
   return (
-    <>
-      <ul className={cssStyles.list}>
-        {notes.map((note) => {
-          return (
-            <li className={cssStyles.listItem} key={note.id}>
-              <h2 className={cssStyles.title}>{note.title}</h2>
-              <p className={cssStyles.content}>{note.content}</p>
-              <div className={cssStyles.footer}>
-                <span className={cssStyles.tag}>{note.tag}</span>
-                <Link href={`/notes/${note.id}`} className={cssStyles.link}>View details</Link>
-                <button
-                  className={cssStyles.button}
-                  onClick={() => handleDelete(note.id)}
-                  disabled={deletingNoteId === note.id}
-                >
-                  {deletingNoteId !== note.id ? "Delete" : "In progress"}
-                  {deletingNoteId === note.id && <Loading />}
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-
-      {isError && <ErrorMessage />}
-    </>
+    <ul className={css.list}>
+      {items
+        // .filter(note => note.id)
+        .map(el => (
+          <NoteItem
+            key={el.id}
+            item={el}
+            removeItem={removeItem}
+            isPending={isPending}
+          />
+        ))}
+    </ul>
   );
 }

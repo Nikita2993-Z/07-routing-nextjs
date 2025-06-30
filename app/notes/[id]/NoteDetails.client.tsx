@@ -1,75 +1,58 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
-import { fetchNoteById } from "../../../lib/api";
-import styles from "./NoteDetails.module.css";
+import { useParams } from 'next/navigation';
+import css from './NoteDetails.module.css';
+import { useQuery } from '@tanstack/react-query';
+import { fetchNoteById } from '@/lib/api';
+import { format, parseISO } from 'date-fns';
+
 
 export default function NoteDetailsClient() {
-  const params = useParams();
-  const idParam = params?.id;
-  const id = Number(idParam);
-
-  const isValidId = !isNaN(id) && id > 0;
+  
+  const { id } = useParams<{ id: string }>();
 
   const {
     data: note,
     isLoading,
     error,
-    isSuccess,
-    isError,
   } = useQuery({
-    queryKey: ["note", id],
-    queryFn: () => fetchNoteById(id),
-    enabled: isValidId, 
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(Number(id)),
     refetchOnMount: false,
   });
 
-  if (!isValidId) {
-    return (
-      <p className={styles.errorMessage}>
-        Invalid note ID: <code>{String(idParam)}</code>
-      </p>
-    );
+  if (isLoading) return <p>Loading, please wait...</p>;
+  if (error || !note) return <p>Something went wrong.</p>;
+
+  let label = '';
+  let formattedDate = 'Date not available';
+
+  if (note?.updatedAt || note?.createdAt) {
+    const backendData = note?.updatedAt || note?.createdAt;
+    label = note?.updatedAt ? 'Updated at: ' : 'Created at: ';
+    const date = parseISO(backendData);
+    formattedDate = format(date, "HH:mm, do 'of' MMMM yyyy");
   }
 
-  if (isError) throw error;
-
-  const formatDate = (isoDate: string): string => {
-    const date = new Date(isoDate);
-    return date.toLocaleString("uk-UA", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
-    <div>
-      {isLoading && <p className={styles.loadMessage}>Loading, please wait...</p>}
-
-      {!error && !note && !isLoading && (
-        <p className={styles.errorMessage}>Note not found.</p>
-      )}
-
-      {note && isSuccess && (
-        <div className={styles.container}>
-          <div className={styles.item}>
-            <div className={styles.header}>
-              <h2>{note.title}</h2>
-              <button className={styles.editBtn}>Edit note</button>
-            </div>
-            <p className={styles.content}>{note.content}</p>
-            <p className={styles.date}>
-              {note.updatedAt
-                ? `Updated at: ${formatDate(note.updatedAt)}`
-                : `Created at: ${formatDate(note.createdAt)}`}
-            </p>
-          </div>
+    <div className={css.container}>
+      <div className={css.item}>
+        <div className={css.header}>
+          <h2>{note?.title}</h2>
+          <button
+        
+            className={css.editBtn}
+          >
+            Edit note
+          </button>
         </div>
-      )}
+        <p className={css.content}>{note?.content}</p>
+        <p className={css.date}>
+          {label}
+          {formattedDate}
+        </p>
+      </div>
+      {}
     </div>
   );
 }

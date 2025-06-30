@@ -1,8 +1,8 @@
-import css from "./Header.module.css";
-import Link from "next/link";
-import TagsMenu from "../TagsMenu/TagsMenu";
+import Link from 'next/link';
+import css from './Header.module.css';
+import TagsMenu from '../TagsMenu/TagsMenu';
 
-const Header = () => {
+export default async function Header() {
   return (
     <header className={css.header}>
       <Link href="/" aria-label="Home">
@@ -20,6 +20,4 @@ const Header = () => {
       </nav>
     </header>
   );
-};
-
-export default Header;
+}
