@@ -2,18 +2,17 @@
 import axios from "axios";
 import { Note } from "../types/note";
 
-// API token check
 const API_KEY = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 if (!API_KEY) throw new Error("API token is not defined");
 
-// Axios configuration
+
 axios.defaults.baseURL = `https://notehub-public.goit.study/api`;
 axios.defaults.headers.common["Authorization"] = `Bearer ${API_KEY}`;
 
-// Pagination configuration
+
 const PER_PAGE = 12;
 
-// Types
+
 export interface NotesResponse {
   notes: Note[];
   totalPages: number;
@@ -31,24 +30,24 @@ interface SearchParams {
   search?: string;
 }
 
-// Fetch notes with optional search and pagination
+
 export async function fetchNotes(
   search: string,
-  page: number
+  page: number,
+  tag?: string
 ): Promise<NotesResponse> {
-  const params: SearchParams = { page, perPage: PER_PAGE };
-  if (search) params.search = search;
+  const perPage = 12;
+  const params: any = { page, perPage };
 
-  try {
-    const res = await axios.get<NotesResponse>("/notes", { params });
-    return res.data;
-  } catch (error) {
-    console.error("Error fetching notes:", error);
-    throw new Error("Failed to fetch notes. Please try again later.");
-  }
+  if (search) params.search = search;
+  if (tag) params.tag = tag;
+
+  const res = await axios.get<NotesResponse>("/notes", { params });
+
+  return res.data;
 }
 
-// Create a new note
+
 export async function createNote({
   title,
   content,
@@ -78,7 +77,7 @@ export async function deleteNote(id: number): Promise<Note> {
   }
 }
 
-// Fetch note details by ID
+
 export async function fetchNoteById(id: number): Promise<Note> {
   try {
     const res = await axios.get<Note>(`/notes/${id}`);

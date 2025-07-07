@@ -13,7 +13,8 @@ import { PropagateLoader } from "react-spinners";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { Note } from "../../types/note";
 
-type NotesClientProps = {
+interface NotesClientProps {
+  tag?: string;
   query: string;
   page: number;
   initialData: {
