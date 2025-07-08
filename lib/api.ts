@@ -1,17 +1,11 @@
-
 import axios from "axios";
 import { Note } from "../types/note";
 
 const API_KEY = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 if (!API_KEY) throw new Error("API token is not defined");
 
-
 axios.defaults.baseURL = `https://notehub-public.goit.study/api`;
 axios.defaults.headers.common["Authorization"] = `Bearer ${API_KEY}`;
-
-
-const PER_PAGE = 12;
-
 
 export interface NotesResponse {
   notes: Note[];
@@ -24,20 +18,17 @@ export interface CreateNoteValues {
   tag: "Work" | "Personal" | "Meeting" | "Shopping" | "Todo";
 }
 
-interface SearchParams {
-  page: number;
-  perPage: number;
-  search?: string;
-}
-
-
 export async function fetchNotes(
   search: string,
   page: number,
   tag?: string
 ): Promise<NotesResponse> {
   const perPage = 12;
-  const params: any = { page, perPage };
+
+  const params: Record<string, string | number> = {
+    page,
+    perPage,
+  };
 
   if (search) params.search = search;
   if (tag) params.tag = tag;
@@ -46,7 +37,6 @@ export async function fetchNotes(
 
   return res.data;
 }
-
 
 export async function createNote({
   title,
@@ -66,7 +56,6 @@ export async function createNote({
   }
 }
 
-
 export async function deleteNote(id: number): Promise<Note> {
   try {
     const res = await axios.delete<Note>(`/notes/${id}`);
@@ -76,7 +65,6 @@ export async function deleteNote(id: number): Promise<Note> {
     throw new Error("Failed to delete note. It may not exist.");
   }
 }
-
 
 export async function fetchNoteById(id: number): Promise<Note> {
   try {

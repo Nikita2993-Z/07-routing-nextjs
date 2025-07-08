@@ -6,7 +6,6 @@ import NoteList from "../../components/NoteList/NoteList";
 import { fetchNotes } from "../../lib/api";
 import { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination/Pagination";
-import NoteModal from "../../components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import { useDebounce } from "use-debounce";

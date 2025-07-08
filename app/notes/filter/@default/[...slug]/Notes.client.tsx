@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import type { Note } from '@/types/note';
-import Loading from '@/app/loading';
+
 
 interface NotesClientProps {
   tag?: string;
@@ -22,7 +22,7 @@ export default function NotesClient({
   page,
   initialData,
 }: NotesClientProps) {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ['notes', tag, query, page],
     queryFn: () => fetchNotes(query, page, tag),
     initialData,
