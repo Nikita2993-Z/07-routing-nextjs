@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import TanStackProvider from "../components/TanStackProvider/TanStackProvider";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-
+import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "NoteHub",
@@ -13,20 +13,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-  modal,
-}: Readonly<{
-  children: React.ReactNode;
-  modal: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>
         <TanStackProvider>
           <Header />
           <main style={{ flex: 1 }}>{children}</main>
-          {modal} {/* Вставляємо модальне вікно */}
           <Footer />
         </TanStackProvider>
       </body>

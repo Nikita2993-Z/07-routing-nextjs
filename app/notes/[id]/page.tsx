@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation';
 
 interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function NoteDetails({ params }: PageProps) {

@@ -1,18 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import css from '@/components/SidebarNotes/SidebarNotes.module.css';
+import styles from './SidebarNotes.module.css';
 
 const TAGS = ['All', 'Work', 'Personal', 'Meeting', 'Shopping', 'Todo'];
 
 export default function SidebarNotes() {
   return (
-    <ul className={css.menuList}>
+    <ul className={styles.menuList}>
       {TAGS.map(tag => (
-        <li key={tag} className={css.menuItem}>
+        <li key={tag} className={styles.menuItem}>
           <Link
             href={`/notes/filter${tag === 'All' ? '' : `/${tag}`}`}
-            className={css.menuLink}
+            className={styles.menuLink}
           >
             {tag}
           </Link>
