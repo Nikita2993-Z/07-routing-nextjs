@@ -2,17 +2,17 @@
 
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import css from "./NotesPage.module.css";
-import NoteList from "../../components/NoteList/NoteList";
-import { fetchNotes } from "../../lib/api";
+import NoteList from "@/components/NoteList/NoteList";
+import { fetchNotes } from "@/lib/api";
 import { useEffect, useState } from "react";
-import Pagination from "../../components/Pagination/Pagination";
+import Pagination from "@/components/Pagination/Pagination";
 import NoteForm from "@/components/NoteForm/NoteForm";
-import SearchBox from "../../components/SearchBox/SearchBox";
+import SearchBox from "@/components/SearchBox/SearchBox";
 import { useDebounce } from "use-debounce";
 import { PropagateLoader } from "react-spinners";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
-import { Note } from "../../types/note";
-import Modal from "../../components/Modal/Modal";
+import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
+import { Note } from "@/types/note";
+import Modal from "@/components/Modal/Modal";
 
 interface NotesClientProps {
   tag?: string;
