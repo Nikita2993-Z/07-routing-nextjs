@@ -7,7 +7,13 @@ import {
 import NotesClient from './Notes.client';
 import { Note } from '@/types/note';
 
-export default async function Page({ params }: { params: { slug?: string[] } }) {
+
+
+export default async function Page({
+  params,
+}: {
+  params: { slug?: string[] };
+}) {
   const tag = params.slug?.[0];
 
   const queryClient = new QueryClient();

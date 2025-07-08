@@ -7,11 +7,11 @@ import {
 import NotePreviewClient from './NotePreview.client';
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: { id: string }; 
 };
 
 export default async function NotePreview({ params }: Props) {
-  const { id } = await params;
+  const { id } = params; 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
@@ -21,7 +21,6 @@ export default async function NotePreview({ params }: Props) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      {/* {id && <NotePreviewClient />} */}
       <NotePreviewClient />
     </HydrationBoundary>
   );
