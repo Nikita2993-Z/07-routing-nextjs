@@ -1,15 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
 import { fetchNoteById } from "../../../lib/api";
 import styles from "./NoteDetails.module.css";
 
-export default function NoteDetailsClient() {
-  const params = useParams();
-  const idParam = params?.id;
-  const id = Number(idParam);
+type NoteDetailsClientProps = {
+  id: number;
+};
 
+export default function NoteDetailsClient({ id }: NoteDetailsClientProps) {
   const isValidId = !isNaN(id) && id > 0;
 
   const {
@@ -21,14 +20,14 @@ export default function NoteDetailsClient() {
   } = useQuery({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
-    enabled: isValidId, 
+    enabled: isValidId,
     refetchOnMount: false,
   });
 
   if (!isValidId) {
     return (
       <p className={styles.errorMessage}>
-        Invalid note ID: <code>{String(idParam)}</code>
+        Invalid note ID: <code>{String(id)}</code>
       </p>
     );
   }

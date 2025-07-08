@@ -6,15 +6,16 @@ import {
 import { fetchNoteById } from "../../../lib/api";
 import NoteDetailsClient from "@/app/notes/[id]/NoteDetails.client";
 
-type NoteDetailsProps = {
-  params: Promise<{ id: string }>;
-};
-
-async function NoteDetails({ params }: NoteDetailsProps) {
-  const queryClient = new QueryClient();
-
+export default async function NoteDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const parsedId = Number(id);
+
+  if (isNaN(parsedId)) {
+    console.error("Invalid note ID:", id);
+    return <div>Invalid note ID</div>;
+  }
+
+  const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ["note", parsedId],
@@ -23,9 +24,7 @@ async function NoteDetails({ params }: NoteDetailsProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient  />
+      <NoteDetailsClient id={parsedId} />
     </HydrationBoundary>
   );
 }
-
-export default NoteDetails;

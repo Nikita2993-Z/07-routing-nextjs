@@ -11,20 +11,21 @@ type Props = {
   params: { slug?: string[] };
 };
 
-export default async function Page({ params }: Props) {
-  const tag = params.slug?.[0];
+export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
+  const { slug } = await params;
+  const tag = slug?.[0] ?? undefined;
 
   const queryClient = new QueryClient();
-  const query = '';
+  const query = "";
   const page = 1;
 
   await queryClient.prefetchQuery({
-    queryKey: ['notes', tag, query, page],
+    queryKey: ["notes", tag, query, page],
     queryFn: () => fetchNotes(query, page, tag),
   });
 
   const initialData = queryClient.getQueryData([
-    'notes',
+    "notes",
     tag,
     query,
     page,
