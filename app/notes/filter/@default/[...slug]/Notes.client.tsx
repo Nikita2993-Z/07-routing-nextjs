@@ -5,7 +5,6 @@ import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import type { Note } from '@/types/note';
 
-
 interface NotesClientProps {
   tag?: string;
   query: string;
@@ -25,9 +24,8 @@ export default function NotesClient({
   const { data } = useQuery({
     queryKey: ['notes', tag, query, page],
     queryFn: () => fetchNotes(query, page, tag),
-    initialData,
+    initialData: () => initialData,
   });
 
-  
   return <NoteList notes={data?.notes ?? []} />;
 }

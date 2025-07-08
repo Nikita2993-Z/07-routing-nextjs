@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import css from './SideBar.module.css';
+import css from '@/components/SidebarNotes/SidebarNotes.module.css';
 
 const TAGS = ['All', 'Work', 'Personal', 'Meeting', 'Shopping', 'Todo'];
 

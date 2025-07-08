@@ -14,7 +14,7 @@ export default function FilterLayout({
     <div className={css.layout}>
       <aside className={css.sidebar}>{sidebar}</aside>
       <main className={css.main}>{defaultSlot}</main>
-      {modal} {/* Модальне вікно поверх основного контенту */}
+      {modal}
     </div>
   );
 }
