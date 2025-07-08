@@ -5,25 +5,33 @@ import {
 } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
 import NoteDetailsClient from './NoteDetails.client';
+import { notFound } from 'next/navigation';
 
-export default async function NoteDetails({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const parsedId = Number(params.id);
+interface PageProps {
+  params: Promise<{ id: string }>;
+  searchParams?: Record<string, string | string[] | undefined>;
+}
+
+export default async function NoteDetails({ params }: PageProps) {
+  const { id } = await params;
+  const parsedId = Number(id);
 
   if (isNaN(parsedId)) {
-    console.error("Invalid note ID:", params.id);
-    return <div>Invalid note ID</div>;
+    console.error('Invalid note ID:', id);
+    return notFound();
   }
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ['note', parsedId],
-    queryFn: () => fetchNoteById(parsedId),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ['note', parsedId],
+      queryFn: () => fetchNoteById(parsedId),
+    });
+  } catch (error) {
+    console.error('Failed to fetch note:', error);
+    return notFound();
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

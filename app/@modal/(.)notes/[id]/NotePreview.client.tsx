@@ -6,6 +6,7 @@ import { fetchNoteById } from "@/lib/api";
 import Modal from "@/components/Modal/Modal";
 import styles from "./NotePreview.module.css";
 
+
 export default function NotePreview() {
   const router = useRouter();
   const { id } = useParams();

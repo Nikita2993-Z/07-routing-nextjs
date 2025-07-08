@@ -7,21 +7,27 @@ import {
 import NotePreviewClient from './NotePreview.client';
 
 type Props = {
-  params: { id: string }; 
+  params: Promise<{ id: string }>;
 };
 
 export default async function NotePreview({ params }: Props) {
-  const { id } = params; 
+  const { id } = await params; 
+  const parsedId = Number(id);
+
+  if (isNaN(parsedId)) {
+    return <div>Invalid note ID</div>;
+  }
+
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['note', id],
-    queryFn: () => fetchNoteById(Number(id)),
+    queryKey: ['note', parsedId],
+    queryFn: () => fetchNoteById(parsedId),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotePreviewClient />
+      <NotePreviewClient  />
     </HydrationBoundary>
   );
 }
