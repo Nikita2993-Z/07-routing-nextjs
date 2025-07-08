@@ -15,15 +15,17 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps {
   children: ReactNode;
+  modal: ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>
         <TanStackProvider>
           <Header />
           <main style={{ flex: 1 }}>{children}</main>
+          {modal}
           <Footer />
         </TanStackProvider>
       </body>

@@ -1,24 +1,19 @@
-import type { ReactNode } from "react";
+import type { ReactElement } from "react";
 import css from "./layout.module.css";
 
 interface LayoutProps {
-  default: ReactNode;
-  sidebar: ReactNode;
-  modal: ReactNode;
+  default: ReactElement;
+  sidebar: ReactElement;
 }
 
 export default function Layout({
   default: defaultSlot,
   sidebar,
-  modal,
-}: LayoutProps) {
+}: LayoutProps): ReactElement {
   return (
-    <>
-      {modal}
-      <div className={css.layout}>
-        <aside className={css.sidebar}>{sidebar}</aside>
-        <main className={css.main}>{defaultSlot}</main>
-      </div>
-    </>
+    <div className={css.layout}>
+      <aside className={css.sidebar}>{sidebar}</aside>
+      <main className={css.main}>{defaultSlot}</main>
+    </div>
   );
 }
