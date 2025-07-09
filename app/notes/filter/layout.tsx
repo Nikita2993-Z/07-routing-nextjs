@@ -1,19 +1,19 @@
-import type { ReactElement } from "react";
-import css from "./layout.module.css";
+import type { ReactNode } from 'react';
+import css from './layout.module.css';
 
-interface LayoutProps {
-  default: ReactElement;
-  sidebar: ReactElement;
+interface FilterLayoutProps {
+  children: ReactNode;  
+  sidebar: ReactNode;  
 }
 
-export default function Layout({
-  default: defaultSlot,
+export default function FilterLayout({
+  children,
   sidebar,
-}: LayoutProps): ReactElement {
+}: FilterLayoutProps) {
   return (
     <div className={css.layout}>
       <aside className={css.sidebar}>{sidebar}</aside>
-      <main className={css.main}>{defaultSlot}</main>
+      <main className={css.main}>{children}</main>
     </div>
   );
 }

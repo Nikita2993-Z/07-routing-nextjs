@@ -6,9 +6,7 @@ import NoteForm from '@/components/NoteForm/NoteForm';
 
 export default function NewNoteModal() {
   const router = useRouter();
-  const handleClose = () => {
-    router.back();
-  };
+  const handleClose = () => router.back();
 
   return (
     <Modal onClose={handleClose}>

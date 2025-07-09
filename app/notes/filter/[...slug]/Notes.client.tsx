@@ -2,18 +2,18 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '../../../../../lib/api';
-import NoteList from '../../../../../components/NoteList/NoteList';
-import SearchBox from '../../../../../components/SearchBox/SearchBox';
-import Pagination from '../../../../../components/Pagination/Pagination';
+import { fetchNotes } from '@/lib/api';
+import NoteList from '@/components/NoteList/NoteList';
+import SearchBox from '@/components/SearchBox/SearchBox';
+import Pagination from '@/components/Pagination/Pagination';
 import Link from 'next/link';
-import type { Note } from '../../../../../types/note';
+import type { Note } from '@/types/note';
 import css from './Notes.client.module.css';
 
 interface NotesClientProps {
   tag?: string;
   initialQuery: string;
-  initialPage: number;        // ← это поле
+  initialPage: number;      
   initialData: { notes: Note[]; totalPages: number };
 }
 
@@ -37,24 +37,29 @@ export default function NotesClient({
   return (
     <div>
       <div className={css.controls}>
+        {/* Поиск */}
         <SearchBox inputValue={query} onChange={setQuery} />
+
+        {/* Пагинация */}
+        <Pagination
+          totalPages={data?.totalPages ?? 1}
+          currentPage={currentPage}
+          setPage={setCurrentPage}
+        />
+
+        {/* Кнопка создания */}
         <Link href="/notes/new" className={css.createButton}>
           Create note +
         </Link>
       </div>
 
-      {isFetching && <p>Loading...</p>}
+      
+
+      {/* Список заметок */}
       <NoteList notes={data?.notes ?? []} />
 
-      <Pagination
-        totalPages={data?.totalPages ?? 1}
-        currentPage={currentPage}
-        setPage={setCurrentPage}
-        pageRangeDisplayed={5}
-        marginPagesDisplayed={1}
-        containerClassName={css.pagination}
-        activeClassName={css.active}
-      />
+
+      {isFetching && <p>Loading...</p>}
     </div>
   );
 }

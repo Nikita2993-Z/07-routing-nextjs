@@ -1,31 +1,28 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import styles from "./Modal.module.css";
+import { ReactNode, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import styles from './Modal.module.css';
 
-type ModalProps = {
+interface ModalProps {
+  children: ReactNode;
   onClose: () => void;
-  children: React.ReactNode;
-};
+}
 
-export default function Modal({ onClose, children }: ModalProps) {
+export default function Modal({ children, onClose }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+    setMounted(true);
+  }, []);
 
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onEsc);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onEsc);
-    };
-  }, [onClose]);
 
-  return createPortal(
-    <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+  if (!mounted) return null;
+
+  return ReactDOM.createPortal(
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <button className={styles.close} onClick={onClose}>×</button>
         {children}
       </div>
     </div>,
