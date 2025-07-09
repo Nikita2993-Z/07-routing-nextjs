@@ -1,11 +1,11 @@
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes } from '../../../../../lib/api';
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
 import NotesClient from './Notes.client';
-import { Note } from '@/types/note';
+import { Note } from '../../../../../types/note';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
@@ -15,8 +15,8 @@ interface PageProps {
 
 export default async function Page({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const { query = "", page = "1" } = searchParams ? await searchParams : {};
-  const tag = slug?.[0];
+  const { query = '', page = '1' } = searchParams ? await searchParams : {};
+  const tag = slug?.[0];              // undefined → “All notes”
   const pageNum = Number(page);
 
   if (isNaN(pageNum) || pageNum < 1) {
@@ -24,23 +24,15 @@ export default async function Page({ params, searchParams }: PageProps) {
   }
 
   const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ['notes', tag, query, pageNum],
+    queryFn: () => fetchNotes(query, pageNum, tag),
+  });
 
-  try {
-    await queryClient.prefetchQuery({
-      queryKey: ['notes', tag, query, pageNum],
-      queryFn: () => fetchNotes(query, pageNum, tag),
-    });
-  } catch (error) {
-    console.error("Failed to fetch notes:", error);
-    return notFound();
-  }
-
-  const initialData = queryClient.getQueryData<{ notes: Note[]; totalPages: number }>([
-    'notes',
-    tag,
-    query,
-    pageNum,
-  ]);
+  const initialData = queryClient.getQueryData<{
+    notes: Note[];
+    totalPages: number;
+  }>(['notes', tag, query, pageNum]);
 
   if (!initialData) {
     return notFound();
@@ -48,7 +40,12 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotesClient tag={tag} query={query} page={pageNum} initialData={initialData} />
+      <NotesClient
+        tag={tag}
+        initialQuery={query}
+        initialPage={pageNum}       // ← передаём initialPage, не page
+        initialData={initialData}
+      />
     </HydrationBoundary>
   );
 }
