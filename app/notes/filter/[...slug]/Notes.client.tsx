@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useDebounce } from 'use-debounce';
 import { fetchNotes } from '@/lib/api';
+import type { Note } from '@/types/note';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
-import Link from 'next/link';
-import type { Note } from '@/types/note';
+import Modal from '@/components/Modal/Modal';
+import NoteForm from '@/components/NoteForm/NoteForm';
 import css from './Notes.client.module.css';
 
 interface NotesClientProps {
   tag?: string;
   initialQuery: string;
-  initialPage: number;      
+  initialPage: number;
   initialData: { notes: Note[]; totalPages: number };
 }
 
@@ -23,43 +25,54 @@ export default function NotesClient({
   initialPage,
   initialData,
 }: NotesClientProps) {
-  const [query, setQuery] = useState(initialQuery);
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [query, setQuery] = useState<string>(initialQuery);
+  const [debouncedQuery] = useDebounce(query, 500);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const { data, isFetching } = useQuery({
-    queryKey: ['notes', tag, query, currentPage],
-    queryFn: () => fetchNotes(query, currentPage, tag),
-    initialData: () => initialData,
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedQuery]);
+
+  const { data, isFetching, isError } = useQuery({
+    queryKey: ['notes', tag, debouncedQuery, currentPage],
+    queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
+    initialData,
     placeholderData: initialData,
     refetchOnWindowFocus: false,
   });
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div>
       <div className={css.controls}>
-        {/* Поиск */}
+        
         <SearchBox inputValue={query} onChange={setQuery} />
 
-        {/* Пагинация */}
+      
         <Pagination
           totalPages={data?.totalPages ?? 1}
           currentPage={currentPage}
           setPage={setCurrentPage}
         />
 
-        {/* Кнопка создания */}
-        <Link href="/notes/new" className={css.createButton}>
+      
+        <button onClick={openModal} className={css.createButton}>
           Create note +
-        </Link>
+        </button>
       </div>
 
-      
-
-      {/* Список заметок */}
       <NoteList notes={data?.notes ?? []} />
 
-
-      {isFetching && <p>Loading...</p>}
+     {isFetching && <p>Loading...</p>}
+      {isError && <p>Error loading notes.</p>}
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
+          <NoteForm onClose={closeModal} />
+        </Modal>
+      )}
     </div>
   );
 }
