@@ -1,3 +1,4 @@
+// components/NoteList/NoteList.tsx
 
 import cssStyles from "./NoteList.module.css";
 import type { Note } from "../../types/note";
@@ -14,7 +15,6 @@ interface NoteListProps {
 
 export default function NoteList({ notes }: NoteListProps) {
   const [deletingNoteId, setDeletingNoteId] = useState<Note["id"] | null>(null);
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -35,31 +35,34 @@ export default function NoteList({ notes }: NoteListProps) {
     mutation.mutate(id);
   };
 
+  if (!notes || notes.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <ul className={cssStyles.list}>
-        {notes.map((note) => {
-          return (
-            <li className={cssStyles.listItem} key={note.id}>
-              <h2 className={cssStyles.title}>{note.title}</h2>
-              <p className={cssStyles.content}>{note.content}</p>
-              <div className={cssStyles.footer}>
-                <span className={cssStyles.tag}>{note.tag}</span>
-                <Link href={`/notes/${note.id}`} className={cssStyles.link}>View details</Link>
-                <button
-                  className={cssStyles.button}
-                  onClick={() => handleDelete(note.id)}
-                  disabled={deletingNoteId === note.id}
-                >
-                  {deletingNoteId !== note.id ? "Delete" : "In progress"}
-                  {deletingNoteId === note.id && <Loading />}
-                </button>
-              </div>
-            </li>
-          );
-        })}
+        {notes.map((note) => (
+          <li className={cssStyles.listItem} key={note.id}>
+            <h2 className={cssStyles.title}>{note.title}</h2>
+            <p className={cssStyles.content}>{note.content}</p>
+            <div className={cssStyles.footer}>
+              <span className={cssStyles.tag}>{note.tag}</span>
+              <Link href={`/notes/${note.id}`} className={cssStyles.link}>
+                View details
+              </Link>
+              <button
+                className={cssStyles.button}
+                onClick={() => handleDelete(note.id)}
+                disabled={deletingNoteId === note.id}
+              >
+                {deletingNoteId !== note.id ? "Delete" : "In progress"}
+                {deletingNoteId === note.id && <Loading />}
+              </button>
+            </div>
+          </li>
+        ))}
       </ul>
-
       {isError && <ErrorMessage />}
     </>
   );

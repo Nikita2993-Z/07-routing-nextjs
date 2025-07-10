@@ -32,7 +32,7 @@ export default function NotesClient({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQuery]);
+  }, [query]);
 
   const { data, isFetching, isError } = useQuery({
     queryKey: ['notes', tag, debouncedQuery, currentPage],
@@ -48,25 +48,22 @@ export default function NotesClient({
   return (
     <div>
       <div className={css.controls}>
-        
         <SearchBox inputValue={query} onChange={setQuery} />
-
-      
         <Pagination
           totalPages={data?.totalPages ?? 1}
           currentPage={currentPage}
           setPage={setCurrentPage}
         />
-
-      
         <button onClick={openModal} className={css.createButton}>
           Create note +
         </button>
       </div>
 
-      <NoteList notes={data?.notes ?? []} />
+      {data?.notes && data.notes.length > 0 && (
+        <NoteList notes={data.notes} />
+      )}
 
-     {isFetching && <p>Loading...</p>}
+      {isFetching && <p>Loading...</p>}
       {isError && <p>Error loading notes.</p>}
       {isModalOpen && (
         <Modal onClose={closeModal}>
